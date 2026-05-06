@@ -37,7 +37,10 @@ jobs:
         uses: oven-sh/setup-bun@v2
 
       - name: Install dependencies
-        run: bun install --registry https://registry.npmjs.org/ --frozen-lockfile --prefer-offline --network-timeout 60000
+        # run: bun install --registry https://registry.npmjs.org/ --frozen-lockfile --prefer-offline --network-timeout 60000
+        run: |
+          bun set registry https://registry.npmjs.org/
+          bun install --frozen-lockfile --prefer-offline --network-timeout 60000
         continue-on-error: false
         timeout-minutes: 10
 
