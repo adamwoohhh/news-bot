@@ -20,7 +20,9 @@ jobs:
         uses: oven-sh/setup-bun@v2
 
       - name: Install dependencies
-        run: bun install --registry https://registry.npmjs.org/ --frozen-lockfile
+        run: bun install --registry https://registry.npmjs.org/ --frozen-lockfile --prefer-offline
+        continue-on-error: false
+        timeout-minutes: 10
 
       - name: Typecheck
         run: bun run typecheck
