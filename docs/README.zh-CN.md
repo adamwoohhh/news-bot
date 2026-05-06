@@ -59,6 +59,31 @@ news-bot lark-doc
 lark-cli docs +fetch --doc "<doc>" --format pretty
 ```
 
+如果需要同时下载文档中的图片和文件素材，可以开启媒体下载：
+
+```bash
+news-bot lark-doc \
+  --doc "https://xxx.feishu.cn/docx/..." \
+  --out ./docs \
+  --download-media \
+  --media-dir ./docs/media
+```
+
+也可以通过环境变量控制：
+
+```bash
+NEWS_BOT_LARK_DOC_DOWNLOAD_MEDIA=true \
+NEWS_BOT_LARK_DOC_MEDIA_DIR="./docs/media" \
+news-bot lark-doc
+```
+
+开启后，命令会从 Markdown 中解析 `<image token="..."/>` 和
+`<file token="..." name="..."/>`，并通过以下命令下载：
+
+```bash
+lark-cli docs +media-download --token "<token>" --output "<media-path>"
+```
+
 如果 `lark-cli` 没有安装、没有登录，或者当前账号没有文档权限，命令会失败。
 
 ## 本地构建

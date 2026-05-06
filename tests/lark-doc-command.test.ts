@@ -47,4 +47,58 @@ describe("runLarkDoc", () => {
       ),
     ).rejects.toThrow("Fetched Markdown is empty");
   });
+
+  test("downloads media tokens into the configured media directory when enabled", async () => {
+    const root = await mkdtemp(join(tmpdir(), "news-bot-"));
+    tempDirs.push(root);
+    const mediaDir = join(root, "assets");
+    const downloads: Array<{ token: string; output: string }> = [];
+
+    await runLarkDoc(
+      {
+        doc: "doc-token",
+        out: root,
+        downloadMedia: true,
+        mediaDir,
+      },
+      {},
+      {
+        fetchMarkdown: async () => [
+          "# 资源文档",
+          "",
+          '<image token="img-token" width="120"/>',
+          '<file token="file-token" name="Report 1.pdf"/>',
+        ].join("\n"),
+        downloadMedia: async (media) => {
+          downloads.push(media);
+        },
+        log: () => {},
+      },
+    );
+
+    expect(downloads).toEqual([
+      { token: "img-token", output: join(mediaDir, "img-token") },
+      { token: "file-token", output: join(mediaDir, "report-1.pdf") },
+    ]);
+  });
+
+  test("leaves media tags alone when media downloading is disabled", async () => {
+    const root = await mkdtemp(join(tmpdir(), "news-bot-"));
+    tempDirs.push(root);
+    let downloadCount = 0;
+
+    await runLarkDoc(
+      { doc: "doc-token", out: root },
+      {},
+      {
+        fetchMarkdown: async () => '# 资源文档\n\n<image token="img-token"/>',
+        downloadMedia: async () => {
+          downloadCount += 1;
+        },
+        log: () => {},
+      },
+    );
+
+    expect(downloadCount).toBe(0);
+  });
 });

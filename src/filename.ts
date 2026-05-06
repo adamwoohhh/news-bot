@@ -3,13 +3,13 @@ import { pinyin } from "pinyin-pro";
 const CHINESE_RE = /[\u3400-\u9fff]/;
 
 export function buildMarkdownFilename(title: string | undefined, now = new Date()): string {
-  const base = title ? normalizeTitle(title) : "";
+  const base = title ? buildSafeFilename(title) : "";
   const safeBase = base || fallbackBase(now);
   return `${safeBase}.md`;
 }
 
-function normalizeTitle(title: string): string {
-  const romanized = romanizeChineseOnly(title);
+export function buildSafeFilename(value: string): string {
+  const romanized = romanizeChineseOnly(value);
 
   return romanized
     .toLowerCase()

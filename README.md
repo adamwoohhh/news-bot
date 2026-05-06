@@ -69,6 +69,13 @@ The `lark-doc` command still requires `lark-cli` to be installed and authenticat
 lark-cli docs +fetch --doc "<doc>" --format pretty
 ```
 
+When `--download-media` is enabled, media referenced by `<image token="..."/>` and
+`<file token="..." name="..."/>` tags is downloaded with:
+
+```bash
+lark-cli docs +media-download --token "<token>" --output "<media-path>"
+```
+
 ## Release
 
 Releases are published by GitHub Actions when a version tag is pushed:
@@ -97,10 +104,22 @@ install.sh
 dist/news-bot lark-doc --doc "https://xxx.feishu.cn/docx/..." --out ./docs
 ```
 
+Download referenced media files too:
+
+```bash
+dist/news-bot lark-doc \
+  --doc "https://xxx.feishu.cn/docx/..." \
+  --out ./docs \
+  --download-media \
+  --media-dir ./docs/media
+```
+
 Or with environment variables:
 
 ```bash
 NEWS_BOT_LARK_DOC="https://xxx.feishu.cn/docx/..." \
 NEWS_BOT_LARK_DOC_OUT="./docs" \
+NEWS_BOT_LARK_DOC_DOWNLOAD_MEDIA=true \
+NEWS_BOT_LARK_DOC_MEDIA_DIR="./docs/media" \
 dist/news-bot lark-doc
 ```

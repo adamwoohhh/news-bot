@@ -18,14 +18,29 @@ program
     "--out <dir>",
     "Output directory. Falls back to NEWS_BOT_LARK_DOC_OUT, then current directory.",
   )
-  .action(async (options: { doc?: string; out?: string }) => {
-    try {
-      await runLarkDoc(options);
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      console.error(message);
-      process.exitCode = 1;
-    }
-  });
+  .option(
+    "--download-media",
+    "Download media files referenced by <image> and <file> tags. Falls back to NEWS_BOT_LARK_DOC_DOWNLOAD_MEDIA.",
+  )
+  .option(
+    "--media-dir <dir>",
+    "Media download directory. Falls back to NEWS_BOT_LARK_DOC_MEDIA_DIR, then ./media.",
+  )
+  .action(
+    async (options: {
+      doc?: string;
+      out?: string;
+      downloadMedia?: boolean;
+      mediaDir?: string;
+    }) => {
+      try {
+        await runLarkDoc(options);
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        console.error(message);
+        process.exitCode = 1;
+      }
+    },
+  );
 
 await program.parseAsync();
