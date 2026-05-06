@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, test } from "bun:test";
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdtemp, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { runLarkDoc } from "../src/commands/lark-doc.ts";
@@ -46,5 +46,54 @@ describe("runLarkDoc", () => {
         },
       ),
     ).rejects.toThrow("Fetched Markdown is empty");
+  });
+
+  test("downloads media, rewrites links, and writes rewritten markdown", async () => {
+    const root = await mkdtemp(join(tmpdir(), "news-bot-"));
+    tempDirs.push(root);
+    const downloaded: Array<{ token: string; outputPath: string }> = [];
+
+    const result = await runLarkDoc(
+      { doc: "doc-token", out: root, downloadMedia: true },
+      {},
+      {
+        fetchMarkdown: async () =>
+          "# With Media\n\n![image](https://example.feishu.cn/file?token=imageToken)",
+        downloadMedia: async (token, outputPath) => {
+          downloaded.push({ token, outputPath });
+          await writeFile(outputPath, "media");
+        },
+        log: () => {},
+      },
+    );
+
+    expect(downloaded).toEqual([
+      { token: "imageToken", outputPath: join(root, "media", "imageToken") },
+    ]);
+    expect(await Bun.file(result).text()).toBe("# With Media\n\n![image](./media/imageToken)");
+  });
+
+  test("does not download or rewrite media when disabled", async () => {
+    const root = await mkdtemp(join(tmpdir(), "news-bot-"));
+    tempDirs.push(root);
+    let downloadCalled = false;
+
+    const result = await runLarkDoc(
+      { doc: "doc-token", out: root },
+      {},
+      {
+        fetchMarkdown: async () =>
+          "# With Media\n\n![image](https://example.feishu.cn/file?token=imageToken)",
+        downloadMedia: async () => {
+          downloadCalled = true;
+        },
+        log: () => {},
+      },
+    );
+
+    expect(downloadCalled).toBe(false);
+    expect(await Bun.file(result).text()).toBe(
+      "# With Media\n\n![image](https://example.feishu.cn/file?token=imageToken)",
+    );
   });
 });

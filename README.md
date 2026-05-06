@@ -97,10 +97,25 @@ install.sh
 dist/news-bot lark-doc --doc "https://xxx.feishu.cn/docx/..." --out ./docs
 ```
 
+Download document media and rewrite Markdown links to local files:
+
+```bash
+dist/news-bot lark-doc --doc "https://xxx.feishu.cn/docx/..." --out ./docs --download-media
+dist/news-bot lark-doc --doc "https://xxx.feishu.cn/docx/..." --out ./docs --download-media --media-out ./docs/assets
+```
+
 Or with environment variables:
 
 ```bash
 NEWS_BOT_LARK_DOC="https://xxx.feishu.cn/docx/..." \
 NEWS_BOT_LARK_DOC_OUT="./docs" \
+dist/news-bot lark-doc
+```
+
+Media options can also be configured with environment variables:
+
+```bash
+NEWS_BOT_LARK_DOC_DOWNLOAD_MEDIA=true \
+NEWS_BOT_LARK_DOC_MEDIA_OUT="./docs/assets" \
 dist/news-bot lark-doc
 ```

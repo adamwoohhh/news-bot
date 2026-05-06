@@ -18,7 +18,15 @@ program
     "--out <dir>",
     "Output directory. Falls back to NEWS_BOT_LARK_DOC_OUT, then current directory.",
   )
-  .action(async (options: { doc?: string; out?: string }) => {
+  .option(
+    "--download-media",
+    "Download document media and rewrite Markdown links. Falls back to NEWS_BOT_LARK_DOC_DOWNLOAD_MEDIA.",
+  )
+  .option(
+    "--media-out <dir>",
+    "Media output directory. Falls back to NEWS_BOT_LARK_DOC_MEDIA_OUT, then <out>/media.",
+  )
+  .action(async (options: { doc?: string; out?: string; downloadMedia?: boolean; mediaOut?: string }) => {
     try {
       await runLarkDoc(options);
     } catch (error) {
