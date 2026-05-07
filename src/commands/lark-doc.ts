@@ -28,25 +28,36 @@ export async function runLarkDoc(
     throw new Error("Fetched Markdown is empty.");
   }
 
+  const title = extractFirstH1(markdown);
+  const filename = buildMarkdownFilename(title);
+  const markdownBase = filename.replace(/\.md$/, "");
+  let markdownDir = config.outDir;
+  let markdownFilename = filename;
+
   if (config.downloadMedia) {
     const references = findLarkMediaReferences(markdown);
     if (references.length > 0) {
-      await mkdir(config.mediaOutDir, { recursive: true });
+      markdownDir = join(config.outDir, markdownBase);
+      markdownFilename = "index.md";
+
+      const mediaOutDir =
+        config.mediaOutDir === join(config.outDir, "media")
+          ? join(markdownDir, "media")
+          : config.mediaOutDir;
+      await mkdir(mediaOutDir, { recursive: true });
 
       const replacements = new Map<string, string>();
       for (const reference of references) {
-        const outputPath = join(config.mediaOutDir, reference.token);
+        const outputPath = join(mediaOutDir, reference.token);
         await downloadMedia(reference.token, outputPath);
-        replacements.set(reference.token, toMarkdownRelativePath(config.outDir, outputPath));
+        replacements.set(reference.token, toMarkdownRelativePath(markdownDir, outputPath));
       }
 
       markdown = rewriteLarkMediaReferences(markdown, replacements);
     }
   }
 
-  const title = extractFirstH1(markdown);
-  const filename = buildMarkdownFilename(title);
-  const outputPath = await writeUniqueMarkdownFile(config.outDir, filename, markdown);
+  const outputPath = await writeUniqueMarkdownFile(markdownDir, markdownFilename, markdown);
 
   log(outputPath);
   return outputPath;

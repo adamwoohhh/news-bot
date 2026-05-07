@@ -67,8 +67,9 @@ describe("runLarkDoc", () => {
       },
     );
 
+    expect(result).toBe(join(root, "with-media", "index.md"));
     expect(downloaded).toEqual([
-      { token: "imageToken", outputPath: join(root, "media", "imageToken") },
+      { token: "imageToken", outputPath: join(root, "with-media", "media", "imageToken") },
     ]);
     expect(await Bun.file(result).text()).toBe("# With Media\n\n![image](./media/imageToken)");
   });
@@ -78,7 +79,7 @@ describe("runLarkDoc", () => {
     tempDirs.push(root);
     const downloaded: Array<{ token: string; outputPath: string }> = [];
 
-    await runLarkDoc(
+    const result = await runLarkDoc(
       { doc: "doc-token", out: root, downloadMedia: true },
       {},
       {
@@ -96,10 +97,28 @@ describe("runLarkDoc", () => {
       },
     );
 
+    expect(result).toBe(join(root, "with-lark-tags", "index.md"));
     expect(downloaded).toEqual([
-      { token: "imageToken", outputPath: join(root, "media", "imageToken") },
-      { token: "fileToken", outputPath: join(root, "media", "fileToken") },
+      { token: "imageToken", outputPath: join(root, "with-lark-tags", "media", "imageToken") },
+      { token: "fileToken", outputPath: join(root, "with-lark-tags", "media", "fileToken") },
     ]);
+  });
+
+  test("keeps flat markdown path when media downloading is enabled but no media exists", async () => {
+    const root = await mkdtemp(join(tmpdir(), "news-bot-"));
+    tempDirs.push(root);
+
+    const result = await runLarkDoc(
+      { doc: "doc-token", out: root, downloadMedia: true },
+      {},
+      {
+        fetchMarkdown: async () => "# No Media\n\nbody",
+        log: () => {},
+      },
+    );
+
+    expect(result).toBe(join(root, "no-media.md"));
+    expect(await Bun.file(result).text()).toBe("# No Media\n\nbody");
   });
 
   test("does not download or rewrite media when disabled", async () => {

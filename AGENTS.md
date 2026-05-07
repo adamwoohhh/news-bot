@@ -38,4 +38,10 @@ Do not commit credentials, downloaded private documents, or local `.env` files. 
 
 ## Agent-Specific Instructions
 
-When adding or modifying features, use the relevant `superpowers` workflow before implementation. Start with `superpowers:brainstorming` to clarify intent and scope, use `superpowers:test-driven-development` for feature or bugfix implementation, and finish with `superpowers:verification-before-completion` before reporting completion.
+Before changing code or behavior, classify the request:
+
+- For a new feature or behavior change, use `superpowers:brainstorming` first to clarify intent and scope, then use `superpowers:test-driven-development` for implementation.
+- For a bugfix, use `superpowers:systematic-debugging` first to identify the root cause, then use `superpowers:test-driven-development` for the fix.
+- If it is unclear whether the request is a bugfix, a new feature, or a small maintenance edit, ask the user whether they want the relevant `superpowers` workflow executed before implementation.
+
+Always finish with `superpowers:verification-before-completion` before reporting completion.
