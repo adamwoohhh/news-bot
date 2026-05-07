@@ -1,6 +1,7 @@
 #!/usr/bin/env bun
 
 import { Command } from "commander";
+import packageJson from "../package.json";
 import { runLarkDoc } from "./commands/lark-doc.ts";
 
 const program = new Command();
@@ -8,7 +9,7 @@ const program = new Command();
 program
   .name("news-bot")
   .description("Utilities for fetching and processing news-related content.")
-  .version("0.1.0");
+  .version(packageJson.version);
 
 program
   .command("lark-doc")

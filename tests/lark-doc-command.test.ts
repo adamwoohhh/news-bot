@@ -73,6 +73,35 @@ describe("runLarkDoc", () => {
     expect(await Bun.file(result).text()).toBe("# With Media\n\n![image](./media/imageToken)");
   });
 
+  test("downloads media from lark image and file tags", async () => {
+    const root = await mkdtemp(join(tmpdir(), "news-bot-"));
+    tempDirs.push(root);
+    const downloaded: Array<{ token: string; outputPath: string }> = [];
+
+    await runLarkDoc(
+      { doc: "doc-token", out: root, downloadMedia: true },
+      {},
+      {
+        fetchMarkdown: async () => [
+          "# With Lark Tags",
+          "",
+          '<image token="imageToken" width="1024" height="768"/>',
+          '<file token="fileToken" name="demo.mp4"/>',
+        ].join("\n"),
+        downloadMedia: async (token, outputPath) => {
+          downloaded.push({ token, outputPath });
+          await writeFile(outputPath, "media");
+        },
+        log: () => {},
+      },
+    );
+
+    expect(downloaded).toEqual([
+      { token: "imageToken", outputPath: join(root, "media", "imageToken") },
+      { token: "fileToken", outputPath: join(root, "media", "fileToken") },
+    ]);
+  });
+
   test("does not download or rewrite media when disabled", async () => {
     const root = await mkdtemp(join(tmpdir(), "news-bot-"));
     tempDirs.push(root);

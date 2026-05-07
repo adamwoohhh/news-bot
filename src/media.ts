@@ -1,9 +1,11 @@
 export type LarkMediaReference = {
   token: string;
-  originalUrl: string;
+  originalUrl?: string;
 };
 
 const markdownUrlPattern = /!?\[[^\]]*\]\(([^)\s]+)\)/g;
+const larkMediaTagPattern = /<(?:image|file)\b[^>]*>/g;
+const attributePattern = /([a-zA-Z_:-]+)\s*=\s*(?:"([^"]*)"|'([^']*)')/g;
 
 export function findLarkMediaReferences(markdown: string): LarkMediaReference[] {
   const references: LarkMediaReference[] = [];
@@ -18,6 +20,16 @@ export function findLarkMediaReferences(markdown: string): LarkMediaReference[] 
 
     seen.add(token);
     references.push({ token, originalUrl });
+  }
+
+  for (const match of markdown.matchAll(larkMediaTagPattern)) {
+    const token = parseAttributes(match[0]).get("token")?.trim();
+    if (!token || seen.has(token)) {
+      continue;
+    }
+
+    seen.add(token);
+    references.push({ token });
   }
 
   return references;
@@ -47,4 +59,14 @@ function extractMediaToken(url: string): string | undefined {
   } catch {
     return undefined;
   }
+}
+
+function parseAttributes(tag: string): Map<string, string> {
+  const attrs = new Map<string, string>();
+
+  for (const match of tag.matchAll(attributePattern)) {
+    attrs.set(match[1], match[2] ?? match[3] ?? "");
+  }
+
+  return attrs;
 }

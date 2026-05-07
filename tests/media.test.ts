@@ -39,6 +39,18 @@ describe("findLarkMediaReferences", () => {
       },
     ]);
   });
+
+  test("extracts media tokens from lark image and file tags", () => {
+    const markdown = [
+      '<image token="imageToken" width="1024" height="768"/>',
+      '<file token="fileToken" name="demo.mp4"/>',
+    ].join("\n");
+
+    expect(findLarkMediaReferences(markdown)).toEqual([
+      { token: "imageToken" },
+      { token: "fileToken" },
+    ]);
+  });
 });
 
 describe("rewriteLarkMediaReferences", () => {
