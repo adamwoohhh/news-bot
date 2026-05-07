@@ -67,4 +67,50 @@ describe("rewriteLarkMediaReferences", () => {
 
     expect(rewritten).toBe("![img](./media/imageToken.png)\n[file](./media/fileToken.pdf)");
   });
+
+  test("adds local src to lark image tags", () => {
+    const markdown = '<image token="imageToken" width="1024" height="768"/>';
+
+    const rewritten = rewriteLarkMediaReferences(markdown, new Map([
+      ["imageToken", "./media/imageToken"],
+    ]));
+
+    expect(rewritten).toBe(
+      '<image token="imageToken" width="1024" height="768" src="./media/imageToken"/>',
+    );
+  });
+
+  test("rewrites video file tags to video tags while preserving attributes", () => {
+    const markdown = '<file token="videoToken" name="demo.mp4" size="123"/>';
+
+    const rewritten = rewriteLarkMediaReferences(markdown, new Map([
+      ["videoToken", "./media/videoToken"],
+    ]));
+
+    expect(rewritten).toBe(
+      '<video token="videoToken" name="demo.mp4" size="123" src="./media/videoToken"/>',
+    );
+  });
+
+  test("replaces existing src when rewriting video file tags", () => {
+    const markdown = '<file token="videoToken" name="demo.mp4" src="https://example.feishu.cn/file"/>';
+
+    const rewritten = rewriteLarkMediaReferences(markdown, new Map([
+      ["videoToken", "./media/videoToken"],
+    ]));
+
+    expect(rewritten).toBe(
+      '<video token="videoToken" name="demo.mp4" src="./media/videoToken"/>',
+    );
+  });
+
+  test("keeps non-video file tags as file tags with local src", () => {
+    const markdown = '<file token="fileToken" name="demo.pdf"/>';
+
+    const rewritten = rewriteLarkMediaReferences(markdown, new Map([
+      ["fileToken", "./media/fileToken"],
+    ]));
+
+    expect(rewritten).toBe('<file token="fileToken" name="demo.pdf" src="./media/fileToken"/>');
+  });
 });

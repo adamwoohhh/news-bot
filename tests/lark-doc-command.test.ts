@@ -102,6 +102,12 @@ describe("runLarkDoc", () => {
       { token: "imageToken", outputPath: join(root, "with-lark-tags", "media", "imageToken") },
       { token: "fileToken", outputPath: join(root, "with-lark-tags", "media", "fileToken") },
     ]);
+    expect(await Bun.file(result).text()).toBe([
+      "# With Lark Tags",
+      "",
+      '<image token="imageToken" width="1024" height="768" src="./media/imageToken"/>',
+      '<video token="fileToken" name="demo.mp4" src="./media/fileToken"/>',
+    ].join("\n"));
   });
 
   test("keeps flat markdown path when media downloading is enabled but no media exists", async () => {

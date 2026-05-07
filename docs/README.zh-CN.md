@@ -45,11 +45,28 @@ NEWS_BOT_BASE_URL=https://example.com/news-bot/v0.1.0 bash install.sh
 news-bot lark-doc --doc "https://xxx.feishu.cn/docx/..." --out ./docs
 ```
 
+下载文档中的多媒体文件，并把引用改写为本地相对路径：
+
+```bash
+news-bot lark-doc --doc "https://xxx.feishu.cn/docx/..." --out ./docs --download-media
+news-bot lark-doc --doc "https://xxx.feishu.cn/docx/..." --out ./docs --download-media --media-out ./docs/assets
+```
+
+启用多媒体下载后，命令会改写支持的 Markdown 链接和飞书原生多媒体标签。`<image />` 和 `<file />` 标签会保留原有属性，并增加本地 `src` 属性；如果原标签已有 `src`，会替换为本地路径。视频类型的 `<file />` 标签会改写为 `<video />` 标签，非视频文件仍保留为 `<file />` 标签。
+
 也可以用环境变量传入参数：
 
 ```bash
 NEWS_BOT_LARK_DOC="https://xxx.feishu.cn/docx/..." \
 NEWS_BOT_LARK_DOC_OUT="./docs" \
+news-bot lark-doc
+```
+
+多媒体下载也可以通过环境变量配置：
+
+```bash
+NEWS_BOT_LARK_DOC_DOWNLOAD_MEDIA=true \
+NEWS_BOT_LARK_DOC_MEDIA_OUT="./docs/assets" \
 news-bot lark-doc
 ```
 

@@ -97,12 +97,14 @@ install.sh
 dist/news-bot lark-doc --doc "https://xxx.feishu.cn/docx/..." --out ./docs
 ```
 
-Download document media and rewrite Markdown links to local files:
+Download document media and rewrite references to local files:
 
 ```bash
 dist/news-bot lark-doc --doc "https://xxx.feishu.cn/docx/..." --out ./docs --download-media
 dist/news-bot lark-doc --doc "https://xxx.feishu.cn/docx/..." --out ./docs --download-media --media-out ./docs/assets
 ```
+
+When media downloading is enabled, the command rewrites supported Markdown links and Lark native media tags to local relative paths. Lark `<image />` and `<file />` tags receive a local `src` attribute while preserving existing attributes. Video `<file />` tags are rewritten as `<video />` tags; non-video file tags remain `<file />` tags. If a tag already has `src`, it is replaced with the local path.
 
 Or with environment variables:
 

@@ -28,6 +28,8 @@ Use TypeScript ES modules with explicit `.ts` import extensions. Keep `strict` T
 
 Tests use `bun:test` with `describe`, `test`, and `expect`. Add focused unit tests next to related coverage in `tests/<module>.test.ts`. For command tests, mock external effects such as Lark fetches and logging instead of invoking real network or CLI dependencies. Run both `bun test` and `bun run typecheck` before handing off changes.
 
+When adding or changing a user-facing feature, update `README.md` in the same change so usage and behavior descriptions stay current. If the feature also affects Chinese-language users, update `docs/README.zh-CN.md` as well.
+
 ## Commit & Pull Request Guidelines
 
 The current history uses Conventional Commit style (`feat: init`). Continue with short, imperative messages such as `fix: handle empty lark document` or `test: cover filename collisions`. Pull requests should include a concise summary, the commands run for verification, linked issues when applicable, and screenshots or terminal output only when user-visible CLI behavior changes.
