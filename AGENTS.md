@@ -28,7 +28,7 @@ Use TypeScript ES modules with explicit `.ts` import extensions. Keep `strict` T
 
 Tests use `bun:test` with `describe`, `test`, and `expect`. Add focused unit tests next to related coverage in `tests/<module>.test.ts`. For command tests, mock external effects such as Lark fetches and logging instead of invoking real network or CLI dependencies. Run both `bun test` and `bun run typecheck` before handing off changes.
 
-When adding or changing a user-facing feature, update `README.md` in the same change so usage and behavior descriptions stay current. If the feature also affects Chinese-language users, update `docs/README.zh-CN.md` as well.
+When adding a substantial user-facing feature, or making a behavior change that materially affects documented usage, update `README.md` in the same change so usage and behavior descriptions stay current. If the feature also affects Chinese-language users, update `docs/README.zh-CN.md` as well. Routine bugfixes do not require README updates unless they change documented behavior or correct an inaccurate existing description.
 
 ## Commit & Pull Request Guidelines
 

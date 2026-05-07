@@ -69,9 +69,9 @@ describe("runLarkDoc", () => {
 
     expect(result).toBe(join(root, "with-media", "index.md"));
     expect(downloaded).toEqual([
-      { token: "imageToken", outputPath: join(root, "with-media", "media", "imageToken") },
+      { token: "imageToken", outputPath: join(root, "with-media", "media", "imageToken.png") },
     ]);
-    expect(await Bun.file(result).text()).toBe("# With Media\n\n![image](./media/imageToken)");
+    expect(await Bun.file(result).text()).toBe("# With Media\n\n![image](./media/imageToken.png)");
   });
 
   test("downloads media from lark image and file tags", async () => {
@@ -99,14 +99,14 @@ describe("runLarkDoc", () => {
 
     expect(result).toBe(join(root, "with-lark-tags", "index.md"));
     expect(downloaded).toEqual([
-      { token: "imageToken", outputPath: join(root, "with-lark-tags", "media", "imageToken") },
-      { token: "fileToken", outputPath: join(root, "with-lark-tags", "media", "fileToken") },
+      { token: "imageToken", outputPath: join(root, "with-lark-tags", "media", "imageToken.png") },
+      { token: "fileToken", outputPath: join(root, "with-lark-tags", "media", "fileToken.mp4") },
     ]);
     expect(await Bun.file(result).text()).toBe([
       "# With Lark Tags",
       "",
-      '<image token="imageToken" width="1024" height="768" src="./media/imageToken"/>',
-      '<video token="fileToken" name="demo.mp4" src="./media/fileToken"/>',
+      '<image token="imageToken" width="1024" height="768" src="./media/imageToken.png"/>',
+      '<video token="fileToken" name="demo.mp4" src="./media/fileToken.mp4"/>',
     ].join("\n"));
   });
 

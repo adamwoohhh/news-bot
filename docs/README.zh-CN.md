@@ -52,7 +52,7 @@ news-bot lark-doc --doc "https://xxx.feishu.cn/docx/..." --out ./docs --download
 news-bot lark-doc --doc "https://xxx.feishu.cn/docx/..." --out ./docs --download-media --media-out ./docs/assets
 ```
 
-启用多媒体下载后，命令会改写支持的 Markdown 链接和飞书原生多媒体标签。`<image />` 和 `<file />` 标签会保留原有属性，并增加本地 `src` 属性；如果原标签已有 `src`，会替换为本地路径。视频类型的 `<file />` 标签会改写为 `<video />` 标签，非视频文件仍保留为 `<file />` 标签。
+启用多媒体下载后，命令会改写支持的 Markdown 链接和飞书原生多媒体标签。本地文件名会带上推断出的媒体后缀，例如图片使用 `.png`，视频使用 `.mp4`。`<image />` 和 `<file />` 标签会保留原有属性，并增加本地 `src` 属性；如果原标签已有 `src`，会替换为本地路径。视频类型的 `<file />` 标签会改写为 `<video />` 标签，非视频文件仍保留为 `<file />` 标签。
 
 也可以用环境变量传入参数：
 

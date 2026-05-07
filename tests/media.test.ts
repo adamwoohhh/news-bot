@@ -1,5 +1,9 @@
 import { describe, expect, test } from "bun:test";
-import { findLarkMediaReferences, rewriteLarkMediaReferences } from "../src/media.ts";
+import {
+  buildLocalMediaFilename,
+  findLarkMediaReferences,
+  rewriteLarkMediaReferences,
+} from "../src/media.ts";
 
 describe("findLarkMediaReferences", () => {
   test("extracts media tokens from markdown links", () => {
@@ -14,6 +18,7 @@ describe("findLarkMediaReferences", () => {
         token: "boxcnImage",
         originalUrl:
           "https://example.feishu.cn/space/api/box/stream/download?file_token=boxcnImage",
+        extension: ".png",
       },
       {
         token: "fileToken123",
@@ -22,6 +27,7 @@ describe("findLarkMediaReferences", () => {
       {
         token: "mediaToken456",
         originalUrl: "https://example.feishu.cn/media/mediaToken456",
+        extension: ".png",
       },
     ]);
   });
@@ -36,6 +42,7 @@ describe("findLarkMediaReferences", () => {
       {
         token: "sameToken",
         originalUrl: "https://example.feishu.cn/file?token=sameToken",
+        extension: ".png",
       },
     ]);
   });
@@ -47,9 +54,26 @@ describe("findLarkMediaReferences", () => {
     ].join("\n");
 
     expect(findLarkMediaReferences(markdown)).toEqual([
-      { token: "imageToken" },
-      { token: "fileToken" },
+      { token: "imageToken", extension: ".png" },
+      { token: "fileToken", extension: ".mp4" },
     ]);
+  });
+});
+
+describe("buildLocalMediaFilename", () => {
+  test("appends known extensions to media tokens", () => {
+    expect(buildLocalMediaFilename({ token: "imageToken", extension: ".png" })).toBe(
+      "imageToken.png",
+    );
+    expect(buildLocalMediaFilename({ token: "videoToken", extension: ".mp4" })).toBe(
+      "videoToken.mp4",
+    );
+  });
+
+  test("does not duplicate extensions already present in tokens", () => {
+    expect(buildLocalMediaFilename({ token: "imageToken.png", extension: ".png" })).toBe(
+      "imageToken.png",
+    );
   });
 });
 

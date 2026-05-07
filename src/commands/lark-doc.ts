@@ -2,7 +2,11 @@ import { resolveLarkDocConfig, type LarkDocOptions } from "../config.ts";
 import { buildMarkdownFilename } from "../filename.ts";
 import { downloadLarkDocMedia, fetchLarkDocMarkdown } from "../lark.ts";
 import { extractFirstH1 } from "../markdown.ts";
-import { findLarkMediaReferences, rewriteLarkMediaReferences } from "../media.ts";
+import {
+  buildLocalMediaFilename,
+  findLarkMediaReferences,
+  rewriteLarkMediaReferences,
+} from "../media.ts";
 import { writeUniqueMarkdownFile } from "../writer.ts";
 import { mkdir } from "node:fs/promises";
 import { join, relative } from "node:path";
@@ -48,7 +52,7 @@ export async function runLarkDoc(
 
       const replacements = new Map<string, string>();
       for (const reference of references) {
-        const outputPath = join(mediaOutDir, reference.token);
+        const outputPath = join(mediaOutDir, buildLocalMediaFilename(reference));
         await downloadMedia(reference.token, outputPath);
         replacements.set(reference.token, toMarkdownRelativePath(markdownDir, outputPath));
       }
