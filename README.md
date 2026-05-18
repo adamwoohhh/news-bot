@@ -36,6 +36,28 @@ NEWS_BOT_BASE_URL=https://example.com/news-bot/v0.1.0 bash install.sh
 
 The `lark-doc` command requires `lark-cli` to be installed and authenticated on the user's machine.
 
+## Update Checks
+
+`news-bot` checks GitHub Releases for a newer version after successful commands. The check is cached at `~/.cache/news-bot/update-check.json` and runs at most once every 24 hours. Update notices are written to stderr so command stdout stays machine-readable.
+
+Disable automatic checks for one run:
+
+```bash
+news-bot --no-update-check lark-doc --doc "https://xxx.feishu.cn/docx/..." --out ./docs
+```
+
+Disable automatic checks with an environment variable:
+
+```bash
+NEWS_BOT_NO_UPDATE_CHECK=1 news-bot lark-doc --doc "https://xxx.feishu.cn/docx/..." --out ./docs
+```
+
+CI environments skip automatic checks by default. To check manually:
+
+```bash
+news-bot update-check
+```
+
 ## Build Standalone Binary
 
 Developers need Bun to build the executable:

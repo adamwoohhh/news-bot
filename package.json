@@ -15,7 +15,8 @@
     "test": "bun test",
     "typecheck": "bunx tsc --noEmit",
     "test:manual": "bun run build && ./dist/news-bot lark-doc --doc VDT2wci1tiYBJFkOkywcSTGjnEh --out ./out --download-media",
-    "patch": "bash ./scripts/auto-version.sh"
+    "patch": "bash ./scripts/auto-version.sh",
+    "auto-patch": "bash ./scripts/auto-version.sh"
   },
   "dependencies": {
     "commander": "^12.1.0",

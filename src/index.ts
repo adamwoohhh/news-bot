@@ -3,13 +3,28 @@
 import { Command } from "commander";
 import packageJson from "../package.json";
 import { runLarkDoc } from "./commands/lark-doc.ts";
+import {
+  checkForUpdate,
+  formatUpdateMessage,
+  shouldSkipUpdateCheck,
+} from "./update-check.ts";
 
 const program = new Command();
 
 program
   .name("news-bot")
   .description("Utilities for fetching and processing news-related content.")
-  .version(packageJson.version);
+  .version(packageJson.version)
+  .option("--no-update-check", "Disable automatic update checks for this run.");
+
+program
+  .command("update-check")
+  .description("Check whether a newer news-bot release is available.")
+  .action(async () => {
+    const result = await checkForUpdate({ currentVersion: packageJson.version });
+    const message = formatUpdateMessage(result);
+    console.error(message ?? `news-bot is up to date, current ${packageJson.version}.`);
+  });
 
 program
   .command("lark-doc")
@@ -64,6 +79,7 @@ program
         ...options,
         jq: options.jq ?? options.q,
       });
+      await maybePrintUpdateNotice();
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       console.error(message);
@@ -72,3 +88,16 @@ program
   });
 
 await program.parseAsync();
+
+async function maybePrintUpdateNotice(): Promise<void> {
+  const options = program.opts<{ updateCheck?: boolean }>();
+  if (options.updateCheck === false || shouldSkipUpdateCheck()) {
+    return;
+  }
+
+  const result = await checkForUpdate({ currentVersion: packageJson.version });
+  const message = formatUpdateMessage(result);
+  if (message) {
+    console.error(message);
+  }
+}

@@ -37,6 +37,28 @@ NEWS_BOT_BASE_URL=https://example.com/news-bot/v0.1.0 bash install.sh
 
 注意：`lark-doc` 命令依赖用户本机已经安装并登录 `lark-cli`。
 
+## 版本检查
+
+`news-bot` 会在命令成功执行后检查 GitHub Releases 是否有新版本。检查结果会缓存在 `~/.cache/news-bot/update-check.json`，最多每 24 小时检查一次。更新提示会写入 stderr，避免污染命令的 stdout。
+
+单次禁用自动检查：
+
+```bash
+news-bot --no-update-check lark-doc --doc "https://xxx.feishu.cn/docx/..." --out ./docs
+```
+
+通过环境变量禁用自动检查：
+
+```bash
+NEWS_BOT_NO_UPDATE_CHECK=1 news-bot lark-doc --doc "https://xxx.feishu.cn/docx/..." --out ./docs
+```
+
+CI 环境默认跳过自动检查。如需手动检查：
+
+```bash
+news-bot update-check
+```
+
 ## 使用
 
 拉取一个飞书文档并写入指定目录：
