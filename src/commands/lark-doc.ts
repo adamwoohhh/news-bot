@@ -1,4 +1,8 @@
-import { resolveLarkDocConfig, type LarkDocOptions } from "../config.ts";
+import {
+  resolveLarkDocConfig,
+  type LarkCliPassthroughOptions,
+  type LarkDocOptions,
+} from "../config.ts";
 import { buildMarkdownFilename } from "../filename.ts";
 import { downloadLarkDocMedia, fetchLarkDocMarkdown } from "../lark.ts";
 import { extractFirstH1 } from "../markdown.ts";
@@ -12,7 +16,7 @@ import { mkdir } from "node:fs/promises";
 import { join, relative } from "node:path";
 
 type RunDeps = {
-  fetchMarkdown?: (doc: string) => Promise<string>;
+  fetchMarkdown?: (doc: string, options: LarkCliPassthroughOptions) => Promise<string>;
   downloadMedia?: (token: string, outputPath: string) => Promise<void>;
   log?: (message: string) => void;
 };
@@ -27,7 +31,7 @@ export async function runLarkDoc(
   const downloadMedia = deps.downloadMedia ?? downloadLarkDocMedia;
   const log = deps.log ?? console.log;
 
-  let markdown = (await fetchMarkdown(config.doc)).trim();
+  let markdown = (await fetchMarkdown(config.doc, config.larkCliOptions)).trim();
   if (!markdown) {
     throw new Error("Fetched Markdown is empty.");
   }

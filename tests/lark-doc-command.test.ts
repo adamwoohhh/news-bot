@@ -32,6 +32,43 @@ describe("runLarkDoc", () => {
     expect(await Bun.file(result).text()).toBe("# 需求文档\n\nbody");
   });
 
+  test("forwards lark-cli passthrough options to markdown fetch", async () => {
+    const root = await mkdtemp(join(tmpdir(), "news-bot-"));
+    tempDirs.push(root);
+    let fetchArgs: unknown[] | undefined;
+
+    await runLarkDoc(
+      {
+        doc: "doc-token",
+        out: root,
+        params: "{\"a\":1}",
+        as: "user",
+        pageAll: true,
+        jq: ".data",
+        profile: "dev",
+      },
+      {},
+      {
+        fetchMarkdown: async (...args) => {
+          fetchArgs = args;
+          return "# Title\n\nbody";
+        },
+        log: () => {},
+      },
+    );
+
+    expect(fetchArgs).toEqual([
+      "doc-token",
+      {
+        params: "{\"a\":1}",
+        as: "user",
+        pageAll: true,
+        jq: ".data",
+        profile: "dev",
+      },
+    ]);
+  });
+
   test("throws before writing when fetched markdown is blank", async () => {
     const root = await mkdtemp(join(tmpdir(), "news-bot-"));
     tempDirs.push(root);

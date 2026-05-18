@@ -1,3 +1,5 @@
+import type { LarkCliPassthroughOptions } from "./config.ts";
+
 type LarkCliProcess = {
   stdout: ReadableStream<Uint8Array> | null;
   stderr: ReadableStream<Uint8Array> | null;
@@ -9,8 +11,12 @@ type LarkCliSpawn = (
   options: { stdout: "pipe"; stderr: "pipe" },
 ) => LarkCliProcess;
 
-export async function fetchLarkDocMarkdown(doc: string): Promise<string> {
-  const proc = Bun.spawn(["lark-cli", "docs", "+fetch", "--doc", doc, "--format", "pretty"], {
+export async function fetchLarkDocMarkdown(
+  doc: string,
+  options: LarkCliPassthroughOptions = {},
+  spawn: LarkCliSpawn = Bun.spawn as LarkCliSpawn,
+): Promise<string> {
+  const proc = spawn(buildLarkDocFetchArgs(doc, options), {
     stdout: "pipe",
     stderr: "pipe",
   });
@@ -32,6 +38,35 @@ export async function fetchLarkDocMarkdown(doc: string): Promise<string> {
   }
 
   return markdown;
+}
+
+function buildLarkDocFetchArgs(doc: string, options: LarkCliPassthroughOptions): string[] {
+  const args = ["lark-cli", "docs", "+fetch", "--doc", doc];
+
+  appendFlag(args, "--params", options.params);
+  appendFlag(args, "--data", options.data);
+  appendFlag(args, "--as", options.as);
+  appendFlag(args, "--format", options.format ?? "pretty");
+  if (options.pageAll) {
+    args.push("--page-all");
+  }
+  appendFlag(args, "--page-size", options.pageSize);
+  appendFlag(args, "--page-limit", options.pageLimit);
+  appendFlag(args, "--page-delay", options.pageDelay);
+  appendFlag(args, "--output", options.output);
+  appendFlag(args, "--jq", options.jq);
+  if (options.dryRun) {
+    args.push("--dry-run");
+  }
+  appendFlag(args, "--profile", options.profile);
+
+  return args;
+}
+
+function appendFlag(args: string[], flag: string, value: string | undefined): void {
+  if (value) {
+    args.push(flag, value);
+  }
 }
 
 export async function downloadLarkDocMedia(

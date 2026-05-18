@@ -69,6 +69,8 @@ The `lark-doc` command still requires `lark-cli` to be installed and authenticat
 lark-cli docs +fetch --doc "<doc>" --format pretty
 ```
 
+`news-bot lark-doc` also accepts these `lark-cli` flags and passes them through to `docs +fetch`: `--params`, `--data`, `--as`, `--format`, `--page-all`, `--page-size`, `--page-limit`, `--page-delay`, `-o`/`--output`, `--jq`, `-q`, `--dry-run`, and `--profile`. If `--format` is omitted, `news-bot` keeps using `pretty` so the fetched content is Markdown.
+
 ## Release
 
 Releases are published by GitHub Actions when a version tag is pushed:
@@ -95,6 +97,12 @@ install.sh
 
 ```bash
 dist/news-bot lark-doc --doc "https://xxx.feishu.cn/docx/..." --out ./docs
+```
+
+Pass through `lark-cli` flags when needed:
+
+```bash
+dist/news-bot lark-doc --doc "https://xxx.feishu.cn/docx/..." --out ./docs --as user --profile work
 ```
 
 Download document media and rewrite references to local files:

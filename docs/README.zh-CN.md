@@ -45,6 +45,12 @@ NEWS_BOT_BASE_URL=https://example.com/news-bot/v0.1.0 bash install.sh
 news-bot lark-doc --doc "https://xxx.feishu.cn/docx/..." --out ./docs
 ```
 
+需要时可以透传 `lark-cli` 参数：
+
+```bash
+news-bot lark-doc --doc "https://xxx.feishu.cn/docx/..." --out ./docs --as user --profile work
+```
+
 下载文档中的多媒体文件，并把引用改写为本地相对路径：
 
 ```bash
@@ -75,6 +81,8 @@ news-bot lark-doc
 ```bash
 lark-cli docs +fetch --doc "<doc>" --format pretty
 ```
+
+`news-bot lark-doc` 支持透传这些 `lark-cli` 参数到 `docs +fetch`：`--params`、`--data`、`--as`、`--format`、`--page-all`、`--page-size`、`--page-limit`、`--page-delay`、`-o`/`--output`、`--jq`、`-q`、`--dry-run`、`--profile`。如果没有显式传入 `--format`，`news-bot` 会继续使用 `pretty`，以便获取 Markdown 内容。
 
 如果 `lark-cli` 没有安装、没有登录，或者当前账号没有文档权限，命令会失败。
 

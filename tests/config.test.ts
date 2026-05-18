@@ -17,6 +17,7 @@ describe("resolveLarkDocConfig", () => {
       outDir: "cli-out",
       downloadMedia: true,
       mediaOutDir: "cli-media",
+      larkCliOptions: {},
     });
   });
 
@@ -35,6 +36,7 @@ describe("resolveLarkDocConfig", () => {
       outDir: "env-out",
       downloadMedia: true,
       mediaOutDir: "env-media",
+      larkCliOptions: {},
     });
   });
 
@@ -45,10 +47,47 @@ describe("resolveLarkDocConfig", () => {
       outDir: ".",
       downloadMedia: false,
       mediaOutDir: "media",
+      larkCliOptions: {},
     });
   });
 
   test("throws when doc is missing", () => {
     expect(() => resolveLarkDocConfig({}, {})).toThrow("Missing required document");
+  });
+
+  test("keeps lark-cli passthrough flags separate from news-bot config", () => {
+    const config = resolveLarkDocConfig(
+      {
+        doc: "cli-doc",
+        params: "{\"a\":1}",
+        data: "{\"b\":2}",
+        as: "user",
+        format: "json",
+        pageAll: true,
+        pageSize: "50",
+        pageLimit: "3",
+        pageDelay: "100",
+        output: "/tmp/out.json",
+        jq: ".data",
+        dryRun: true,
+        profile: "dev",
+      },
+      {},
+    );
+
+    expect(config.larkCliOptions).toEqual({
+      params: "{\"a\":1}",
+      data: "{\"b\":2}",
+      as: "user",
+      format: "json",
+      pageAll: true,
+      pageSize: "50",
+      pageLimit: "3",
+      pageDelay: "100",
+      output: "/tmp/out.json",
+      jq: ".data",
+      dryRun: true,
+      profile: "dev",
+    });
   });
 });

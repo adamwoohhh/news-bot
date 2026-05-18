@@ -27,9 +27,43 @@ program
     "--media-out <dir>",
     "Media output directory. Falls back to NEWS_BOT_LARK_DOC_MEDIA_OUT, then <out>/media.",
   )
-  .action(async (options: { doc?: string; out?: string; downloadMedia?: boolean; mediaOut?: string }) => {
+  .option("--params <json>", "Pass URL/query parameters JSON through to lark-cli.")
+  .option("--data <json>", "Pass request body JSON through to lark-cli.")
+  .option("--as <type>", "Pass identity type through to lark-cli: user | bot | auto.")
+  .option("--format <fmt>", "Pass output format through to lark-cli.")
+  .option("--page-all", "Pass automatic pagination through to lark-cli.")
+  .option("--page-size <N>", "Pass page size through to lark-cli.")
+  .option("--page-limit <N>", "Pass max page count through to lark-cli.")
+  .option("--page-delay <MS>", "Pass page delay through to lark-cli.")
+  .option("-o, --output <path>", "Pass binary output file path through to lark-cli.")
+  .option("--jq <expr>", "Pass jq filter expression through to lark-cli.")
+  .option("-q <expr>", "Shorthand for --jq.")
+  .option("--dry-run", "Pass dry-run mode through to lark-cli.")
+  .option("--profile <profile>", "Pass lark-cli profile through to lark-cli.")
+  .action(async (options: {
+    doc?: string;
+    out?: string;
+    downloadMedia?: boolean;
+    mediaOut?: string;
+    params?: string;
+    data?: string;
+    as?: string;
+    format?: string;
+    pageAll?: boolean;
+    pageSize?: string;
+    pageLimit?: string;
+    pageDelay?: string;
+    output?: string;
+    jq?: string;
+    q?: string;
+    dryRun?: boolean;
+    profile?: string;
+  }) => {
     try {
-      await runLarkDoc(options);
+      await runLarkDoc({
+        ...options,
+        jq: options.jq ?? options.q,
+      });
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       console.error(message);
